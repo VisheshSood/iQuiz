@@ -10,10 +10,9 @@ import UIKit
 
 class ViewController: UITableViewController {
   
+  let topicIcons = ["Math.png","Marvel.png","Science.png"]
   let topicHeadings = ["Mathematics", "Marvel Super Heroes", "Science"]
   let topicDescription = ["Simple Arithmetic","Comic Questions","Things That Dont Make Sense"]
-  let topicIcons = ["Math.png","Marvel.png","Science.png"]
-  
   
   @IBAction func settingButton(_ sender: UIBarButtonItem) {
     let view = UIAlertController(title: "Settings Pressed", message: "OK", preferredStyle: .alert)
@@ -32,7 +31,6 @@ class ViewController: UITableViewController {
     row.textLabel?.text = topicHeadings[indexPath.row]
     row.detailTextLabel?.text = topicDescription[indexPath.row]
     row.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
-    
     return row
   }
   
