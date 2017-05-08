@@ -14,7 +14,7 @@ class ViewController: UITableViewController {
   
   
   let topicIcons = ["Math.png","Marvel.png","Science.png"]
-  let topicHeadings = ["Mathematics", "Marvel Super Heroes", "Science"]
+  let topicHeadings = ["Mathematics", "Marvel Super Heroes", "Science!"]
   let topicDescription = ["Simple Arithmetic","Comic Questions","Things That Dont Make Sense"]
   
   @IBAction func settingButton(_ sender: UIBarButtonItem) {
@@ -54,8 +54,8 @@ class ViewController: UITableViewController {
     QuestionViewController.fetchedQuizOnQuestionViewController = currentQuiz
     for i in 0...currentQuiz.count-1 {
       if currentQuiz[i].Title == cell.textLabel?.text{
-        QuestionViewController.numberOfQuestion = currentQuiz[i].Questions.count
-        QuestionViewController.currentNumberOfQuestion = currentQuiz[i].Questions.count
+        QuestionViewController.QuestionCount = currentQuiz[i].Questions.count
+        QuestionViewController.CurrentQuestion = currentQuiz[i].Questions.count
       }
     }
     let viewController = storyboard?.instantiateViewController(withIdentifier: "question")
@@ -68,7 +68,7 @@ class ViewController: UITableViewController {
   }
   
   func getJsonFile() {
-    let url = URL(string: "http://tednewardsandbox.site44.com/questions.json")
+    let url = URL(string: "https://tednewardsandbox.site44.com/questions.json")
     let sessionConfiq = URLSessionConfiguration.default
     let session = URLSession(configuration: sessionConfiq)
     
@@ -89,10 +89,7 @@ class ViewController: UITableViewController {
                 self.currentQuiz.append(Quiz(title: title, desc: desc, questions: questions))
               }
               self.tableView.reloadData()
-              //print (self.fetchedQuiz[0].title)
-              //self.jsonArray = myJson
-              //print(self.jsonArray[0])
-              
+            
             }
             catch{
               
