@@ -11,11 +11,13 @@ import UIKit
 class ViewController: UITableViewController {
   
   var currentQuiz = [Quiz]()
+  let scrollToRefresh = UIRefreshControl()
   
   
   let topicIcons = ["Math.png","Marvel.png","Science.png"]
   let topicHeadings = ["Mathematics", "Marvel Super Heroes", "Science!"]
   let topicDescription = ["Simple Arithmetic","Comic Questions","Things That Dont Make Sense"]
+  
   
   
   @IBAction func settingButton(_ sender: UIBarButtonItem) {
@@ -32,27 +34,25 @@ class ViewController: UITableViewController {
         self.downloadJSON(URLString: urlText)
       }
     })
-    
-    
     view.addAction(defaultAction)
     self.present(view, animated: true, completion: nil)
   }
-
-  
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    tableView.addSubview(scrollToRefresh)
+    scrollToRefresh.addTarget(self, action: #selector(scrollFunction), for: .valueChanged)
+    
+    
     DispatchQueue.global().async {
       self.downloadJSON()
       DispatchQueue.main.async {
         self.tableView.reloadData()
       }
     }
+    
+    
     tableView.tableFooterView = UIView()
-  }
-  
-  override func numberOfSections(in tableView: UITableView) -> Int {
-    return 1
   }
   
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -69,6 +69,12 @@ class ViewController: UITableViewController {
     return cell
   }
   
+  func scrollFunction(refreshControl: UIRefreshControl) {
+    self.currentQuiz = []
+    downloadJSON()
+    refreshControl.endRefreshing()
+  }
+  
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
     let cell:UITableViewCell = tableView.cellForRow(at: indexPath)!
     QuestionViewController.cellName = (cell.textLabel?.text!)!
@@ -82,7 +88,7 @@ class ViewController: UITableViewController {
     let viewController = storyboard?.instantiateViewController(withIdentifier: "question")
     self.navigationController?.pushViewController(viewController!, animated: true)
   }
-
+  
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
@@ -92,9 +98,13 @@ class ViewController: UITableViewController {
     var submittedURL = URL(string: URLString)
     let sessionConfiguration = URLSessionConfiguration.default
     let currentSession = URLSession(configuration: sessionConfiguration)
+    
     if submittedURL == nil{
       submittedURL = URL(string: "invalid URL")
     }
+    
+    
+    
     let task = currentSession.dataTask(with: submittedURL!) {(data, response, err) in
       if err != nil
       {
@@ -135,6 +145,8 @@ class ViewController: UITableViewController {
         }
       }
     }
+    
+    
     task.resume()
   }
 }
