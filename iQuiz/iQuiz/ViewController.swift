@@ -12,31 +12,11 @@ class ViewController: UITableViewController {
   
   var currentQuiz = [Quiz]()
   let scrollToRefresh = UIRefreshControl()
-  
+  var currentURL = "http://tednewardsandbox.site44.com/questions.json"
   
   let topicIcons = ["Math.png","Marvel.png","Science.png"]
   let topicHeadings = ["Mathematics", "Marvel Super Heroes", "Science!"]
   let topicDescription = ["Simple Arithmetic","Comic Questions","Things That Dont Make Sense"]
-  
-  
-  
-  @IBAction func settingButton(_ sender: UIBarButtonItem) {
-    let view = UIAlertController(title: "Additional Settings", message: "Try my quiz at http://www.visheshsood.com/vishesh.json !", preferredStyle: .alert)
-    view.addTextField { (urlInput) in
-      urlInput.placeholder = "Insert URL"
-    }
-    
-    let defaultAction = UIAlertAction(title: "Update Quiz", style: .default, handler: { alert -> Void in
-      let urlText : String = view.textFields![0].text!
-      print(urlText)
-      self.currentQuiz = []
-      if urlText != ""{
-        self.downloadJSON(URLString: urlText)
-      }
-    })
-    view.addAction(defaultAction)
-    self.present(view, animated: true, completion: nil)
-  }
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -58,6 +38,25 @@ class ViewController: UITableViewController {
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return currentQuiz.count
   }
+
+  @IBAction func settingButton(_ sender: UIBarButtonItem) {
+    let view = UIAlertController(title: "Additional Settings", message: "Try my quiz at http://www.visheshsood.com/vishesh.json !", preferredStyle: .alert)
+    view.addTextField { (urlInput) in
+      urlInput.placeholder = "Insert URL"
+    }
+    
+    let defaultAction = UIAlertAction(title: "Update Quiz", style: .default, handler: { alert -> Void in
+      let urlText : String = view.textFields![0].text!
+      print(urlText)
+      self.currentQuiz = []
+      if urlText != ""{
+        self.downloadJSON(URLString: urlText)
+      }
+    })
+    view.addAction(defaultAction)
+    self.present(view, animated: true, completion: nil)
+  }
+  
   
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "Cell")
@@ -67,12 +66,6 @@ class ViewController: UITableViewController {
     cell.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
     
     return cell
-  }
-  
-  func scrollFunction(refreshControl: UIRefreshControl) {
-    self.currentQuiz = []
-    downloadJSON()
-    refreshControl.endRefreshing()
   }
   
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
@@ -96,6 +89,7 @@ class ViewController: UITableViewController {
   
   func downloadJSON(URLString: String = "http://tednewardsandbox.site44.com/questions.json") {
     var submittedURL = URL(string: URLString)
+    self.currentURL = URLString
     let sessionConfiguration = URLSessionConfiguration.default
     let currentSession = URLSession(configuration: sessionConfiguration)
     
@@ -148,6 +142,12 @@ class ViewController: UITableViewController {
     
     
     task.resume()
+  }
+
+  func scrollFunction(refreshControl: UIRefreshControl) {
+    self.currentQuiz = []
+    downloadJSON(URLString: currentURL)
+    refreshControl.endRefreshing()
   }
 }
 
